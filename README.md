@@ -17,4 +17,4 @@ AdminTool/src/main/webapp/resources/vendors に
 - Bootstrap-Admin-Theme-3 https://github.com/VinceG/Bootstrap-Admin-Theme-3/
 
 # Licence
-LICENCE.mdをご覧ください。
+LICENCEをご覧ください。
