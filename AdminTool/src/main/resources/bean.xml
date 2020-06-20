@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 1. DI test -->
+	<bean id="mybean1" class="rl.knockout.taiei.ditest.MyBean1">
+    	<!-- <property name="message" value="" /> -->
+    	<constructor-arg type="String" name="message" value="Seed"/>
+    </bean>
+    
+    <!-- 2. Create Interface and Implement them, to Exclude Dependency utterly-->
+    <bean id="mybean" class="rl.knockout.taiei.ditest.MyBean2">
+    	<constructor-arg type="String" name="message" value="in Liberl"/>
+    </bean>
+    
+    <!-- add for validator ref:「Spring Framework 5 プログラミング入門」 -->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    </bean>
+</beans>
+<!--
+Put this in src/main/resources !
+src/main/resources is DIFFERENT FROM main/webapp/resources being used by jsp files -->
