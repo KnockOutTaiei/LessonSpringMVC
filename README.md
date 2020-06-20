@@ -4,3 +4,6 @@ Spring(https://spring.io/)を用いた、Spring MVC Projectです。
 
 # How to use
 Spring環境で https://localhost:8080/taiei に接続してください。
+
+# Licence
+LICENCE.mdをご覧ください。
