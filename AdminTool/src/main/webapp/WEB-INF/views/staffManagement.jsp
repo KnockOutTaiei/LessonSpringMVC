@@ -23,7 +23,7 @@
     <!-- styles -->
     <link href="resources/css/styles.css" rel="stylesheet">
 
-    <link href="resources/vendors/fontawesome-free-5.13.0-web/css/fontawesome.min.css" rel="stylesheet">
+    <link href="resources/vendors/fontawesome-free-5.13.1-web/css/fontawesome.min.css" rel="stylesheet">
     <link href="resources/vendors/form-helpers/css/bootstrap-formhelpers.min.css" rel="stylesheet">
     <link href="resources/vendors/select/bootstrap-select.min.css" rel="stylesheet">
     <link href="resources/vendors/tags/css/bootstrap-tags.css" rel="stylesheet">
