@@ -1,6 +1,6 @@
 # LessonSpringMVC
 オンラインショッピングサイトの管理者画面を想定したウェブアプリケーション
-Spring (https://spring.io/) を用いた、Spring MVC Projectです。
+Spring (http://spring.io/) を用いた、Spring MVC Projectです。
 
 # How to use
 AdminTool以下がワークスペースのプロジェクトフォルダです。
