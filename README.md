@@ -1,9 +1,10 @@
 # LessonSpringMVC
 オンラインショッピングサイトの管理者画面を想定したウェブアプリケーション
-Spring(https://spring.io/)を用いた、Spring MVC Projectです。
+Spring (https://spring.io/) を用いた、Spring MVC Projectです。
 
 # How to use
-Spring環境で https://localhost:8080/taiei に接続してください。
+AdminTool以下がワークスペースのプロジェクトフォルダです。
+Spring環境でサーバーに追加して起動し、 https://localhost:8080/taiei に接続してください。
 
 # Licence
 LICENCE.mdをご覧ください。
