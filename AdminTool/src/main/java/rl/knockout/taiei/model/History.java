@@ -1,17 +1,20 @@
 package rl.knockout.taiei.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.*;
+import javax.validation.*;
 import javax.validation.constraints.*;
 
 
 //DAO
 public class History{
 	//From/To OrderTbl
-	@Min(value=0,message="The value must be Positve") private String order_id;
+	private String order_id;
 	private String acc_id;
 	private int whole_amount;
-	private int tax;
+	private double tax;
 	private String order_date;
 	private String limit_date;
 	private String confirm_date;
@@ -19,7 +22,7 @@ public class History{
 	
 	//From/To OrderDetailTbl
 	//From/To ProductTbl
-	private ArrayList<OrderDetail> orderDetail;{orderDetail = new ArrayList<OrderDetail>();};
+	@Valid private ArrayList<OrderDetail> orderDetail;{orderDetail = new ArrayList<OrderDetail>();};
 	
 	//From/To Account
 	private String login_name;
@@ -42,10 +45,10 @@ public class History{
 	public void setWhole_amount(int whole_amount) {
 		this.whole_amount = whole_amount;
 	}
-	public int getTax() {
+	public double getTax() {
 		return tax;
 	}
-	public void setTax(int tax) {
+	public void setTax(double tax) {
 		this.tax = tax;
 	}
 	public String getOrder_date() {
