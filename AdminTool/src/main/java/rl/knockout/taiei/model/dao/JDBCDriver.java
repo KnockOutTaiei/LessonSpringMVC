@@ -6,10 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import rl.knockout.taiei.model.*;
-/**
- * @author Education
- *
- */
+
 public class JDBCDriver extends JDBCBase{
 	/**@override*/
 	/**@deprecated*/
@@ -26,11 +23,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "SELECT staff_id,staff_pw FROM StaffTbl WHERE staff_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, loginForm.getStaff_id());
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setInt(1, loginForm.getStaff_id());
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -38,7 +35,7 @@ public class JDBCDriver extends JDBCBase{
 				while(resultSet.next()) {
 					resultFlag = resultSet.getString("staff_pw").equals(loginForm.getStaff_pw());
 				}
-				pstmt.close();
+				preparedStatement.close();
 				return resultFlag;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -59,11 +56,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "SELECT staff_id,staff_pw FROM StaffTbl WHERE staff_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, staff_id);
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setInt(1, staff_id);
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -71,7 +68,7 @@ public class JDBCDriver extends JDBCBase{
 				while(resultSet.next()) {
 					resultFlag = resultSet.getString("staff_pw").equals(staff_pw);
 				}
-				pstmt.close();
+				preparedStatement.close();
 				return resultFlag;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -92,11 +89,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "SELECT staff_id,staff_name,staff_roll_id FROM StaffTbl WHERE staff_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, staff_id);
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setInt(1, staff_id);
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -107,7 +104,7 @@ public class JDBCDriver extends JDBCBase{
 					user.setStaff_roll_id(resultSet.getInt("staff_roll_id"));
 					break;
 				}
-				pstmt.close();
+				preparedStatement.close();
 				return resultFlag;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -128,11 +125,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "SELECT staff_id,staff_pw FROM StaffTbl WHERE staff_id=? AND staff_roll_id=9;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, loginForm.getStaff_id());
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setInt(1, loginForm.getStaff_id());
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -140,7 +137,7 @@ public class JDBCDriver extends JDBCBase{
 				while(resultSet.next()) {
 					resultFlag = resultSet.getString("staff_pw").equals(loginForm.getStaff_pw());
 				}
-				pstmt.close();
+				preparedStatement.close();
 				return resultFlag;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -205,31 +202,31 @@ public class JDBCDriver extends JDBCBase{
 				query += " OFFSET "+ ((Integer)((page-1)*10)).toString();//0,10,20,...
 
 				query+=";";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
 				////from LocalDateTime to like"2020/05/11 15:36:45"
 				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 				if(isExist(acc_id) || isExist(login_name) || isExist(order_status) || isExist(dateKind)) {
 					if(isExist(acc_id)) {
-						pstmt.setString(1, acc_id);
+						preparedStatement.setString(1, acc_id);
 					}
 					if(isExist(login_name)) {
 						//which place of ? is
 						if(isExist(acc_id)) {
-							pstmt.setString(2, login_name);
+							preparedStatement.setString(2, login_name);
 						}else {
-							pstmt.setString(1, login_name);
+							preparedStatement.setString(1, login_name);
 						}
 					}
 					if(isExist(order_status)) {
 						//which place of ? is
 						if(isExist(acc_id) && isExist(login_name)) {
-							pstmt.setString(3, order_status);
+							preparedStatement.setString(3, order_status);
 						}else if (isExist(acc_id) || isExist(login_name)) {//XOR
-							pstmt.setString(2, order_status);
+							preparedStatement.setString(2, order_status);
 						}else {
-							pstmt.setString(1, order_status);
+							preparedStatement.setString(1, order_status);
 						}
 					}
 					switch(dateKind) {
@@ -238,17 +235,17 @@ public class JDBCDriver extends JDBCBase{
 					case CONFIRM:
 						//which place of ? is
 						if(isExist(acc_id) && isExist(login_name) && isExist(order_status)) {
-							pstmt.setString(4, begin.format(format));
-							pstmt.setString(5, end.format(format));
+							preparedStatement.setString(4, begin.format(format));
+							preparedStatement.setString(5, end.format(format));
 						}else if((!isExist(acc_id) && isExist(login_name) && isExist(order_status)) || (isExist(acc_id) && !isExist(login_name) && isExist(order_status)) || (isExist(acc_id) && isExist(login_name) && !isExist(order_status))) {//2 of 3 exist
-							pstmt.setString(3, begin.format(format));
-							pstmt.setString(4, end.format(format));
+							preparedStatement.setString(3, begin.format(format));
+							preparedStatement.setString(4, end.format(format));
 						}else if((!isExist(acc_id) && !isExist(login_name) && isExist(order_status)) || (isExist(acc_id) && !isExist(login_name) && !isExist(order_status)) || (!isExist(acc_id) && isExist(login_name) && !isExist(order_status))){//1 of 3 exists
-							pstmt.setString(2, begin.format(format));
-							pstmt.setString(3, end.format(format));
+							preparedStatement.setString(2, begin.format(format));
+							preparedStatement.setString(3, end.format(format));
 						}else {
-							pstmt.setString(1, begin.format(format));
-							pstmt.setString(2, end.format(format));
+							preparedStatement.setString(1, begin.format(format));
+							preparedStatement.setString(2, end.format(format));
 						}
 						break;
 					case NONE:
@@ -257,7 +254,7 @@ public class JDBCDriver extends JDBCBase{
 					}
 				}
 				
-				ResultSet resultSet = pstmt.executeQuery();
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -274,7 +271,7 @@ public class JDBCDriver extends JDBCBase{
 					historySummaries.add(tempHistorySummary);
 				}//TODO: Is type corresponding to Document? 
 				
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -294,11 +291,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "SELECT OrderTbl.order_id,OrderTbl.acc_id,OrderTbl.whole_amount,OrderTbl.tax,OrderTbl.order_date,OrderTbl.limit_date,OrderTbl.confirm_date,OrderTbl.order_status,OrderDetailTbl.voucher_id,OrderDetailTbl.product_id,OrderDetailTbl.stock,OrderDetailTbl.amount,ProductTbl.product_name,ProductTbl.product_price,Account.login_name FROM OrderTbl INNER JOIN OrderDetailTbl ON OrderTbl.order_id=OrderDetailTbl.order_id INNER JOIN ProductTbl ON OrderDetailTbl.product_id= ProductTbl.product_id INNER JOIN Account ON OrderTbl.acc_id=Account.acc_id WHERE OrderTbl.order_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setString(1, order_id);
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setString(1, order_id);
+				ResultSet resultSet = preparedStatement.executeQuery();
 				//commit
 				super.connection.commit();
 
@@ -310,7 +307,7 @@ public class JDBCDriver extends JDBCBase{
 					history.setOrder_id(resultSet.getString("order_id"));
 					history.setAcc_id(resultSet.getString("acc_id"));
 					history.setWhole_amount(resultSet.getInt("whole_amount"));
-					history.setTax(resultSet.getInt("tax"));
+					history.setTax(resultSet.getDouble("tax"));
 					history.setOrder_date(resultSet.getString("order_date"));//DATETIME型で入れてんのにgetDatetimeがねえ　java.time.format.DateTimeParseException: Text '2020-05-19 12:13:07.0' could not be parsed, unparsed text found at index 19
 					history.setLimit_date(resultSet.getString("limit_date"));
 					history.setConfirm_date(resultSet.getString("confirm_date"));
@@ -327,7 +324,7 @@ public class JDBCDriver extends JDBCBase{
 					//break;
 				}//TODO: Is type corresponding to Document? 
 
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -337,6 +334,63 @@ public class JDBCDriver extends JDBCBase{
 		return false;
 	}
 	
+	public boolean editHistory(String order_id, History history) {
+		if(super.isConnect) {
+			try {
+				//precompile
+				String query = "UPDATE OrderTbl SET order_id=?,acc_id=?,whole_amount=?,tax=?,order_date=?,limit_date=?,confirm_date=?,order_status=? WHERE order_id=?;";
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
+
+				//Set
+				preparedStatement.setString(1, history.getOrder_id());//?!
+				preparedStatement.setString(2, history.getAcc_id());
+				preparedStatement.setInt(3, history.getWhole_amount());
+				preparedStatement.setDouble(4, history.getTax());
+				preparedStatement.setString(5, history.getOrder_date());
+				preparedStatement.setString(6, history.getLimit_date());
+				preparedStatement.setString(7, history.getConfirm_date());
+				preparedStatement.setString(8, history.getOrder_status());
+				preparedStatement.setString(9, order_id);
+
+				//Confirm result
+				int succeededRowNum = preparedStatement.executeUpdate();
+				if(succeededRowNum != 1) {
+					super.connection.rollback();
+				}
+				
+				//SQL of OrderDetail<ArrayList>
+				String query2 = "UPDATE OrderDetailTbl SET voucher_id=?,product_id=?,stock=?,amount=? WHERE order_id=? AND voucher_id=?;";
+				for(OrderDetail key:history.getOrderDetail() ) {
+					////precompile
+					PreparedStatement preparedStatement2 = super.connection.prepareStatement(query2);
+					
+					////Set
+					preparedStatement2.setInt(1, key.getVoucher_id());System.out.println(key.getVoucher_id());
+					preparedStatement2.setInt(2, key.getProduct_id());System.out.println(key.getProduct_id());
+					preparedStatement2.setInt(3, key.getStock());System.out.println(key.getStock());
+					preparedStatement2.setInt(4, key.getAmount());System.out.println(key.getAmount());
+					preparedStatement2.setString(5, history.getOrder_id());System.out.println(history.getOrder_id());
+					preparedStatement2.setInt(6, key.getVoucher_id());System.out.println(key.getVoucher_id());
+
+					//Confirm result
+					int succeededRowNum2 = preparedStatement2.executeUpdate();
+					if(succeededRowNum2 != 1) {
+						super.connection.rollback();System.out.println("rollbacked");
+					}
+				}
+
+				//commit
+				super.connection.commit();
+				
+				preparedStatement.close();
+				return true;
+			}catch(SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
 	/**
 	 * @param history
 	 * @return
@@ -347,19 +401,19 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "UPDATE OrderTbl SET del_flg=TRUE WHERE OrderTbl.order_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setString(1, history.getOrder_id());
-				int succeededRowNum  = pstmt.executeUpdate();
+				preparedStatement.setString(1, history.getOrder_id());
+				int succeededRowNum  = preparedStatement.executeUpdate();
 				//commit
 				super.connection.commit();
 
 				//digest result
 				////from LocalDateTime to like"2020/05/11 15:36:45"
-				if(succeededRowNum!=1) {pstmt.close();return false;}
+				if(succeededRowNum!=1) {preparedStatement.close();return false;}
 				
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -404,36 +458,36 @@ public class JDBCDriver extends JDBCBase{
 				query += " OFFSET "+ ((Integer)((page-1)*10)).toString();//0,10,20,...
 				query+=";";
 				
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 				
 				//Set
 				////from LocalDateTime to like"2020/05/11 15:36:45"
 				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 				if(isExist(staff_name) || isExist(staff_roll_id) || isExist(experience)) {
 					if(isExist(staff_name)) {
-						pstmt.setString(1, staff_name);
+						preparedStatement.setString(1, staff_name);
 					}
 					if(isExist(staff_roll_id)) {
 						if(isExist(staff_name)){
-							pstmt.setString(2, staff_roll_id);
+							preparedStatement.setString(2, staff_roll_id);
 						}else {
-							pstmt.setString(1, staff_roll_id);
+							preparedStatement.setString(1, staff_roll_id);
 						}
 					}
 					if(isExist(experience)) {
 						if(isExist(staff_name) && isExist(staff_roll_id)) {
-							pstmt.setInt(3, experience);
+							preparedStatement.setInt(3, experience);
 						}
 						else if(isExist(staff_name) || isExist(staff_roll_id)) {//XOR
-							pstmt.setInt(2, experience);
+							preparedStatement.setInt(2, experience);
 						}
 						else {
-							pstmt.setInt(1, experience);
+							preparedStatement.setInt(1, experience);
 						}
 					}
 				}
 				
-				ResultSet resultSet = pstmt.executeQuery();
+				ResultSet resultSet = preparedStatement.executeQuery();
 				////commit
 				super.connection.commit();
 
@@ -447,7 +501,7 @@ public class JDBCDriver extends JDBCBase{
 					staffSummaries.add(key);
 				}
 
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -467,11 +521,11 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				////precompile
 				String query = "SELECT staff_id,staff_name,staff_pw,staff_roll_id,experience,gender,age,mail,tel_no,join_date,leave_date FROM StaffTbl WHERE staff_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, staff_id);
-				ResultSet resultSet = pstmt.executeQuery();
+				preparedStatement.setInt(1, staff_id);
+				ResultSet resultSet = preparedStatement.executeQuery();
 				////commit
 				super.connection.commit();
 
@@ -491,7 +545,7 @@ public class JDBCDriver extends JDBCBase{
 					break;
 				}
 
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -511,34 +565,34 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "UPDATE StaffTbl SET staff_name=?,staff_pw=?,staff_roll_id=?,experience=?,gender=?,age=?,mail=?,tel_no=?,join_date=?,leave_date=?,upd_date=? WHERE staff_id=?;";//TODO:個別更新、９個もisExistとifelse文を書くのは面倒すぎる
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setString(1, staff.getStaff_name());
-				pstmt.setString(2, staff.getStaff_pw());
-				pstmt.setInt(3, staff.getStaff_roll_id());
-				pstmt.setInt(4, staff.getExperience());
-				pstmt.setString(5, staff.getGender());
-				pstmt.setInt(6, staff.getAge());
-				pstmt.setString(7, staff.getMail());
-				pstmt.setString(8, staff.getTel_no());
+				preparedStatement.setString(1, staff.getStaff_name());
+				preparedStatement.setString(2, staff.getStaff_pw());
+				preparedStatement.setInt(3, staff.getStaff_roll_id());
+				preparedStatement.setInt(4, staff.getExperience());
+				preparedStatement.setString(5, staff.getGender());
+				preparedStatement.setInt(6, staff.getAge());
+				preparedStatement.setString(7, staff.getMail());
+				preparedStatement.setString(8, staff.getTel_no());
 				//from LocalDateTime to like"2020/05/11 15:36:45"
 				LocalDateTime localdatetime = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 				String timeStr = localdatetime.format(formatter);
-				pstmt.setString(9, staff.getJoin_date());
-				pstmt.setString(10, staff.getLeave_date());
-				pstmt.setString(11, timeStr);
-				pstmt.setInt(12, staff.getStaff_id());
-				int succeededRowNum  = pstmt.executeUpdate();
+				preparedStatement.setString(9, staff.getJoin_date());
+				preparedStatement.setString(10, staff.getLeave_date());
+				preparedStatement.setString(11, timeStr);
+				preparedStatement.setInt(12, staff.getStaff_id());
+				int succeededRowNum  = preparedStatement.executeUpdate();
 				//commit
 				super.connection.commit();
 
 				//digest result
 				////from LocalDateTime to like"2020/05/11 15:36:45"
-				if(succeededRowNum!=1) {pstmt.close();throw new SQLException();}
+				if(succeededRowNum!=1) {preparedStatement.close();throw new SQLException();}
 				
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -558,18 +612,18 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "UPDATE StaffTbl SET del_flg=TRUE WHERE staff_id=?;";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, staff.getStaff_id());
-				int succeededRowNum  = pstmt.executeUpdate();
+				preparedStatement.setInt(1, staff.getStaff_id());
+				int succeededRowNum  = preparedStatement.executeUpdate();
 				//commit
 				super.connection.commit();
 
 				//digest result
-				if(succeededRowNum!=1) {pstmt.close();return false;}
+				if(succeededRowNum!=1) {preparedStatement.close();return false;}
 				
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -590,35 +644,35 @@ public class JDBCDriver extends JDBCBase{
 			try {
 				//precompile
 				String query = "INSERT INTO StaffTbl(staff_id,staff_name,staff_pw,staff_roll_id,experience,gender,age,mail,tel_no,join_date,leave_date,del_flg,ins_date,upd_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,FALSE,?,?);";
-				PreparedStatement pstmt = super.connection.prepareStatement(query);
+				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
 
 				//Set
-				pstmt.setInt(1, staff.getStaff_id());
-				pstmt.setString(2, staff.getStaff_name());
-				pstmt.setString(3, staff.getStaff_pw());
-				pstmt.setInt(4, staff.getStaff_roll_id());
-				pstmt.setInt(5, staff.getExperience());
-				pstmt.setString(6, staff.getGender());
-				pstmt.setInt(7, staff.getAge());
-				pstmt.setString(8, staff.getMail());
-				pstmt.setString(9, staff.getTel_no());
+				preparedStatement.setInt(1, staff.getStaff_id());
+				preparedStatement.setString(2, staff.getStaff_name());
+				preparedStatement.setString(3, staff.getStaff_pw());
+				preparedStatement.setInt(4, staff.getStaff_roll_id());
+				preparedStatement.setInt(5, staff.getExperience());
+				preparedStatement.setString(6, staff.getGender());
+				preparedStatement.setInt(7, staff.getAge());
+				preparedStatement.setString(8, staff.getMail());
+				preparedStatement.setString(9, staff.getTel_no());
 				//from LocalDateTime to like"2020/05/11 15:36:45"
 				LocalDateTime localdatetime = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 				String timeStr = localdatetime.format(formatter);
-				pstmt.setString(10, staff.getJoin_date());
-				pstmt.setString(11, staff.getLeave_date());
-				pstmt.setString(12, timeStr);
-				pstmt.setString(13, timeStr);
-				int succeededRowNum  = pstmt.executeUpdate();
+				preparedStatement.setString(10, staff.getJoin_date());
+				preparedStatement.setString(11, staff.getLeave_date());
+				preparedStatement.setString(12, timeStr);
+				preparedStatement.setString(13, timeStr);
+				int succeededRowNum  = preparedStatement.executeUpdate();
 				//commit
 				super.connection.commit();
 
 				//digest result
 				////from LocalDateTime to like"2020/05/11 15:36:45"
-				if(succeededRowNum!=1) {pstmt.close();return false;}
+				if(succeededRowNum!=1) {preparedStatement.close();return false;}
 				
-				pstmt.close();
+				preparedStatement.close();
 				return true;
 			}catch(SQLException e) {
 				e.printStackTrace();
