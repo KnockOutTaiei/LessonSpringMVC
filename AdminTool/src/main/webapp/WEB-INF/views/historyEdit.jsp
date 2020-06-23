@@ -139,17 +139,17 @@
 									</div>
 									<div class="form-group">
 										<form:label path="order_date">注文日時</form:label>
-										<form:input path="order_date" type="date" class="form-control" value="${history.getOrder_date()}" placeholder="Enter Order Date" />
+										<form:input path="order_date" type="date" class="form-control" value="${history.getOrder_date().substring(0,10)}" placeholder="Enter Order Date" />
 										<form:errors path="order_date" />
 									</div>
 									<div class="form-group">
 										<form:label path="limit_date">支払い期限</form:label>
-										<form:input path="limit_date" type="date" class="form-control" value="${history.getLimit_date()}" placeholder="Enter Limit Date" />
+										<form:input path="limit_date" type="date" class="form-control" value="${history.getLimit_date().substring(0,10)}" placeholder="Enter Limit Date" />
 										<form:errors path="limit_date" />
 									</div>
 									<div class="form-group">
 										<form:label path="confirm_date">支払い日時</form:label>
-										<form:input path="confirm_date" type="date" class="form-control" value="${history.getConfirm_date()}" placeholder="Enter Confirm Date" />
+										<form:input path="confirm_date" type="date" class="form-control" value="${history.getConfirm_date().substring(0,10)}" placeholder="Enter Confirm Date" />
 										<form:errors path="confirm_date" />
 									</div>
 									<div class="form-group">
@@ -157,10 +157,43 @@
 										<form:input path="order_status" type="text" class="form-control" value="${history.getOrder_status()}" placeholder="Enter Order Status" />
 										<form:errors path="order_status" />
 									</div>
+									
+								<c:forEach var="key" items="${history.getOrderDetail()}" varStatus="varStatus"><%//varStatus.indexでループカウンタをとれる %>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].voucher_id">明細ID</form:label>
+										<form:input path="orderDetail[${varStatus.index}].voucher_id" type="text" class="form-control" value="${key.getVoucher_id()}" placeholder="Enter Voucher ID" />
+										<form:errors path="orderDetail[${varStatus.index}].voucher_id" />
+									</div>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].product_id">商品ID</form:label>
+										<form:input path="orderDetail[${varStatus.index}].product_id" type="text" class="form-control" value="${key.getProduct_id()}" placeholder="Enter Product ID" />
+										<form:errors path="orderDetail[${varStatus.index}].product_id" />
+									</div>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].stock">個数</form:label>
+										<form:input path="orderDetail[${varStatus.index}].stock" type="text" class="form-control" value="${key.getStock()}" placeholder="Enter Stock" />
+										<form:errors path="orderDetail[${varStatus.index}].stock" />
+									</div>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].amount">単価</form:label>
+										<form:input path="orderDetail[${varStatus.index}].amount" type="text" class="form-control" value="${key.getAmount()}" placeholder="Enter Amount" />
+										<form:errors path="orderDetail[${varStatus.index}].amount" />
+									</div>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].product_name">商品名</form:label>
+										<form:input path="orderDetail[${varStatus.index}].product_name" type="text" class="form-control" value="${key.getProduct_name()}" placeholder="Enter Product Name" />
+										<form:errors path="orderDetail[${varStatus.index}].product_name" />
+									</div>
+									<div class="form-group">
+										<form:label path="orderDetail[${varStatus.index}].product_price">商品単価</form:label>
+										<form:input path="orderDetail[${varStatus.index}].product_price" type="text" class="form-control" value="${key.getProduct_price()}" placeholder="Enter Product Price" />
+										<form:errors path="orderDetail[${varStatus.index}].product_price" />
+									</div>
+								</c:forEach>
+								
 									<form:button name="confirm" class="btn btn-primary signup">編集を反映</form:button>
 								</form:form>
 								
-								<!---->
 								<p>削除はやりなおせません</p>
 								<form action="deleteHistory" method="get"><button type="submit">この購入履歴を削除</button></form>
 							</div>
