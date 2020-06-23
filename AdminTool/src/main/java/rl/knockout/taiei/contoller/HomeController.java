@@ -3,6 +3,7 @@ package rl.knockout.taiei.contoller;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 import javax.validation.*;
@@ -39,9 +40,9 @@ public class HomeController{
 	
 	private static ApplicationContext app;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)//直下、GETリクエスト
 	public String home() {
-		return "login";
+		return "login";//指定するのはURI。web.xmlに書いたprefix+これ+suffixになる
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -105,7 +106,8 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/history", method = RequestMethod.GET)
-	public String historySearchResult(@RequestParam String order_id, Model model, @ModelAttribute History history, BindingResult result) {
+	public String historySearchResult(@RequestParam String order_id, Model model) {
+		History history = new History();
 		jdbcDriver.getHistory(order_id, history);
 		model.addAttribute("history",history);
 		return "history";
@@ -121,7 +123,7 @@ public class HomeController{
 	public String historyEditModify(Model model, @Validated @ModelAttribute("history") History history, BindingResult result) {
 		//Validation
 		if(result.hasErrors())return "historyEdit";
-		//TODO:編集部分のDAO
+		jdbcDriver.editHistory(history.getOrder_id(),history);
 		model.addAttribute("history",history);
 		return "historyEdit";
 	}
@@ -143,7 +145,7 @@ public class HomeController{
 	
 	@RequestMapping(value = "/administratorMenu", method = RequestMethod.GET)
 	public String toAdministratorMenu() {
-		if(true) {//temporary, TODO:admin-login 
+		if(false) {//temporary, TODO:admin-login 
 			return "administratorMenu";
 		}else {
 			return "menu";
@@ -281,4 +283,13 @@ public class HomeController{
  *１．@ModelAttributeでそのクラスにアクセスするためのメソッドを作る（ここまでセッションと同じ）
  *２．サーブレットに相当するメソッドの引数に、@Validated 型 インスタンス, BindingResult resultと仮引数宣言（セッションの３）、このときBindingResultは直後でないといけない
  *３．jspの書き換え
+ *
+ *
+ *
+ *
+ *@ModelAttribute
+	public ArrayList<OrderDetail> putHistoryToSession(History history){
+        return history.orderDetail;
+    }
+    とかにして別で送るか
  */
