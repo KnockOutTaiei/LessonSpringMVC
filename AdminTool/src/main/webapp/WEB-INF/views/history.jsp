@@ -114,47 +114,47 @@
 			  						<label>履歴閲覧</label>
 			  						<div class="form-group">
 										<form:label path="order_id">注文ID</form:label>
-										<form:input path="order_id" type="text" class="form-control" value="${history.getOrder_id()}" placeholder="Enter Order ID" />
+										<form:input path="order_id" type="text" class="form-control" value="${history.getOrder_id()}" placeholder="Enter Order ID" readonly="true" /><%//html4.01以降では readonly="readonly"なのにタグを使うときreadonly="true"でうまくいく。なんでそんな仕様にした！言え！！ %>
 										<form:errors path="order_id" />
 									</div>
 									<div class="form-group">
 										<form:label path="login_name">ユーザー名</form:label>
-										<form:input path="login_name" type="text" class="form-control" value="${history.getLogin_name()}" placeholder="Enter Login name" />
+										<form:input path="login_name" type="text" class="form-control" value="${history.getLogin_name()}" placeholder="Enter Login name" readonly="true" />
 										<form:errors path="login_name" />
 									</div>
 									<div class="form-group">
 										<form:label path="acc_id">ログインID</form:label>
-										<form:input path="acc_id" type="text" class="form-control" value="${history.getAcc_id()}" placeholder="Enter Account ID" />
+										<form:input path="acc_id" type="text" class="form-control" value="${history.getAcc_id()}" placeholder="Enter Account ID" readonly="true" />
 										<form:errors path="acc_id" />
 									</div>
 									<div class="form-group">
 										<form:label path="whole_amount">購入総額</form:label>
-										<form:input path="whole_amount" type="text" class="form-control" value="${history.getWhole_amount()}" placeholder="Enter Whole Amount" />
+										<form:input path="whole_amount" type="text" class="form-control" value="${history.getWhole_amount()}" placeholder="Enter Whole Amount" readonly="true" />
 										<form:errors path="whole_amount" />
 									</div>
 									<div class="form-group">
 										<form:label path="tax">税</form:label>
-										<form:input path="tax" type="text" class="form-control" value="${history.getTax()}" placeholder="Enter Tax" />
+										<form:input path="tax" type="text" class="form-control" value="${history.getTax()}" placeholder="Enter Tax" readonly="true" />
 										<form:errors path="tax" />
 									</div>
 									<div class="form-group">
 										<form:label path="order_date">注文日時</form:label>
-										<form:input path="order_date" type="text" class="form-control" value="${history.getOrder_date()}" placeholder="Enter Order Date" />
+										<form:input path="order_date" type="date" class="form-control" value="${history.getOrder_date().substring(0,10)}" placeholder="Enter Order Date" readonly="true" />
 										<form:errors path="order_date" />
 									</div>
 									<div class="form-group">
 										<form:label path="limit_date">支払い期限</form:label>
-										<form:input path="limit_date" type="text" class="form-control" value="${history.getLimit_date()}" placeholder="Enter Limit Date" />
+										<form:input path="limit_date" type="date" class="form-control" value="${history.getLimit_date().substring(0,10)}" placeholder="Enter Limit Date" readonly="true" />
 										<form:errors path="limit_date" />
 									</div>
 									<div class="form-group">
 										<form:label path="confirm_date">支払い日時</form:label>
-										<form:input path="confirm_date" type="text" class="form-control" value="${history.getConfirm_date()}" placeholder="Enter Confirm Date" />
+										<form:input path="confirm_date" type="date" class="form-control" value="${history.getConfirm_date().substring(0,10)}" placeholder="Enter Confirm Date" readonly="true" />
 										<form:errors path="confirm_date" />
 									</div>
 									<div class="form-group">
 										<form:label path="order_status">支払い状況</form:label>
-										<form:input path="order_status" type="text" class="form-control" value="${history.getOrder_status()}" placeholder="Enter Order Status" />
+										<form:input path="order_status" type="text" class="form-control" value="${history.getOrder_status()}" placeholder="Enter Order Status" readonly="true" />
 										<form:errors path="order_status" />
 									</div>
 									<c:forEach var="key" items="${history.getOrderDetail()}">

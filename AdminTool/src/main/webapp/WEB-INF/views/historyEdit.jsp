@@ -114,17 +114,17 @@
 			  						<label>履歴編集</label>
 			  						<div class="form-group">
 										<form:label path="order_id">注文ID</form:label>
-										<form:input path="order_id" type="text" class="form-control" value="${history.getOrder_id()}" placeholder="Enter Order ID" />
+										<form:input path="order_id" type="text" class="form-control" value="${history.getOrder_id()}" placeholder="Enter Order ID" readonly="true"/>
 										<form:errors path="order_id" />
 									</div>
 									<div class="form-group">
 										<form:label path="login_name">ユーザー名</form:label>
-										<form:input path="login_name" type="text" class="form-control" value="${history.getLogin_name()}" placeholder="Enter Login name" />
+										<form:input path="login_name" type="text" class="form-control" value="${history.getLogin_name()}" placeholder="Enter Login name" readonly="true" />
 										<form:errors path="login_name" />
 									</div>
 									<div class="form-group">
 										<form:label path="acc_id">ログインID</form:label>
-										<form:input path="acc_id" type="text" class="form-control" value="${history.getAcc_id()}" placeholder="Enter Account ID" />
+										<form:input path="acc_id" type="text" class="form-control" value="${history.getAcc_id()}" placeholder="Enter Account ID" readonly="true"/>
 										<form:errors path="acc_id" />
 									</div>
 									<div class="form-group">
@@ -161,7 +161,7 @@
 								<c:forEach var="key" items="${history.getOrderDetail()}" varStatus="varStatus"><%//varStatus.indexでループカウンタをとれる %>
 									<div class="form-group">
 										<form:label path="orderDetail[${varStatus.index}].voucher_id">明細ID</form:label>
-										<form:input path="orderDetail[${varStatus.index}].voucher_id" type="text" class="form-control" value="${key.getVoucher_id()}" placeholder="Enter Voucher ID" />
+										<form:input path="orderDetail[${varStatus.index}].voucher_id" type="text" class="form-control" value="${key.getVoucher_id()}" placeholder="Enter Voucher ID" readonly="true"/>
 										<form:errors path="orderDetail[${varStatus.index}].voucher_id" />
 									</div>
 									<div class="form-group">
@@ -195,7 +195,7 @@
 								</form:form>
 								
 								<p>削除はやりなおせません</p>
-								<form action="deleteHistory" method="get"><button type="submit">この購入履歴を削除</button></form>
+								<form action="deleteHistory" method="post"><button type="submit">この購入履歴を削除</button></form>
 							</div>
 			  			</div>
 	  				</div>
