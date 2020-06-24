@@ -1,17 +1,19 @@
 package rl.knockout.taiei.model;
 
+import javax.validation.constraints.*;
+
 public class Staff{
-	int staff_id;
-	String staff_name;
-	String staff_pw;
-	int staff_roll_id;
-	int experience;
-	String gender;
-	int age;
-	String mail;
-	String tel_no;
-	String join_date;
-	String leave_date;
+	@NotNull(message="入力してください") @Min(value=0, message="正の整数で指定してください") int staff_id;
+	@NotEmpty(message="入力してください") String staff_name;
+	@NotEmpty(message="入力してください") String staff_pw;
+	@NotNull(message="入力してください") @Min(value=0, message="正の整数で指定してください") int staff_roll_id;
+	@NotNull(message="入力してください") @Min(value=0, message="正の整数で指定してください") int experience;
+	@NotEmpty(message="入力してください") String gender;
+	@NotNull(message="入力してください") @Min(value=0, message="正の整数で指定してください") int age;
+	@NotEmpty(message="入力してください") String mail;
+	@NotEmpty(message="入力してください") String tel_no;
+	@NotEmpty(message="入力してください") String join_date;
+	@NotEmpty(message="入力してください") String leave_date;
 	
 	public int getStaff_id() {
 		return staff_id;

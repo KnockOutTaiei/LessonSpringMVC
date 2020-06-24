@@ -3,9 +3,12 @@ package rl.knockout.taiei.contoller;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 import javax.validation.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -39,28 +42,43 @@ public class HomeController{
 	
 	private static ApplicationContext app;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home() {
-		return "login";
+	@RequestMapping(value = "/", method = RequestMethod.GET)//直下、GETリクエスト
+	public String home(@ModelAttribute("user") User user, Model model) {
+		//delete user;
+		user = new User();
+		model.addAttribute(user);
+				
+		System.out.println("===ログイン画面===");
+		debugWriteUser(user);
+		return "login";//指定するのはURI。web.xmlに書いたprefix+これ+suffixになる
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login(@ModelAttribute("user") User user) {
-		//user = null;//DANGEROUS
+	public String login(@ModelAttribute("user") User user, Model model) {
+		//delete user;
+		user = new User();
+		model.addAttribute(user);
+		
+		System.out.println("===ログイン画面===");
+		debugWriteUser(user);
 		return "login";
 	}
 	
 	@RequestMapping(value = "/menu", method = RequestMethod.GET)
 	public String menu(@ModelAttribute("user") User user) {
-		if(user!=null)return "menu";
-		else return "login";
+		if(user.isPrivilegeLogin())return "menu";
+		else return "redirect:login";
 	}
 	
 	@RequestMapping(value = "/menu", method = RequestMethod.POST, params="confirm")
-	public String menuPost(@Validated LoginForm loginForm, BindingResult result, Model model, @ModelAttribute("user") User user) {
+	public String menuPost(@Validated @ModelAttribute LoginForm loginForm, BindingResult result, Model model, @ModelAttribute("user") User user) {
+		if(result.hasErrors())return "login";
+
 		if(jdbcDriver.canLogin(loginForm)) {
 			jdbcDriver.createUser(loginForm.getStaff_id(), user);
 			model.addAttribute("user",user);
+			System.out.println("===ログイン成功===");
+			debugWriteUser(user);
 			return "menu";
 		}else {
 			return "login";
@@ -68,14 +86,15 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/historySearch", method = RequestMethod.GET)
-	public String goHistorySearch(@ModelAttribute HistorySearchForm historySearchForm, BindingResult result) {
-		return "historySearch";
+	public String goHistorySearch(@ModelAttribute HistorySearchForm historySearchForm, @ModelAttribute("user") User user) {
+		if(user.isPrivilegeLogin())return "historySearch";
+		else return "redirect:login";
 	}
 	
 	@RequestMapping(value = "/historySearch", method = RequestMethod.POST)
 	public ModelAndView historySearch(@Validated @ModelAttribute HistorySearchForm historySearchForm, BindingResult result) {
 		//Validation
-		if(result.hasErrors())return new ModelAndView();
+		if(result.hasErrors())return new ModelAndView("historySearch");
 		
 		//DateKind setting
 		DateKind dateKind;
@@ -99,42 +118,49 @@ public class HomeController{
 		ArrayList<HistorySummary> historySummaries = new ArrayList<HistorySummary>();
 		jdbcDriver.getHistorySummaries(historySearchForm.getAcc_id(),historySearchForm.getLogin_name(),historySearchForm.getOrder_status(),dateKind,begin,end,historySearchForm.getNowPage(),historySummaries);
 		
-		ModelAndView modelAndView = new ModelAndView();
+		ModelAndView modelAndView = new ModelAndView("historySearch");
 		modelAndView.addObject("historySummaries", historySummaries);
 		return modelAndView;
 	}
 	
 	@RequestMapping(value = "/history", method = RequestMethod.GET)
-	public String historySearchResult(@RequestParam String order_id, Model model, @ModelAttribute History history, BindingResult result) {
+	public String historySearchResult(@RequestParam String order_id, Model model, @ModelAttribute("user") User user) {
+		History history = new History();
 		jdbcDriver.getHistory(order_id, history);
 		model.addAttribute("history",history);
-		return "history";
+		if(user.isPrivilegeLogin())return "history";
+		else return "redirect:login";
 	}
 	
 	@RequestMapping(value = "/historyEdit", method = RequestMethod.GET)
-	public String historyEdit(Model model, @ModelAttribute("history") History history) {
+	public String historyEdit(Model model, @ModelAttribute("history") History history, @ModelAttribute("user") User user) {
 		model.addAttribute("history",history);
-		return "historyEdit";
+		if(user.isPrivilegeLogin())return "historyEdit";
+		else return "redirect:login";
 	}
 	
 	@RequestMapping(value = "/historyEdit", method = RequestMethod.POST, produces="text/plain;charset=UTF-8")
 	public String historyEditModify(Model model, @Validated @ModelAttribute("history") History history, BindingResult result) {
 		//Validation
 		if(result.hasErrors())return "historyEdit";
-		//TODO:編集部分のDAO
+		jdbcDriver.editHistory(history.getOrder_id(),history);
 		model.addAttribute("history",history);
 		return "historyEdit";
 	}
 	
-	@RequestMapping(value = "/deleteHistory", method = RequestMethod.GET)
+	@RequestMapping(value = "/deleteHistory", method = RequestMethod.POST)
 	public String deleteHistory(@ModelAttribute("history") History history) {
 		jdbcDriver.deleteHistory(history);
 		return "historyEdit";
 	}
 	
 	@RequestMapping(value = "/administratorMenu", method = RequestMethod.POST)
-	public String administratorMenu(LoginForm loginForm) {
-		if(jdbcDriver.canLoginAdmin(loginForm)) {
+	public String administratorMenu(@Validated LoginForm loginForm,BindingResult result, @ModelAttribute("user") User user) {
+		if(result.hasErrors())return "menu";
+		if(jdbcDriver.canLoginAdmin(loginForm,user)) {
+			jdbcDriver.createUser(loginForm.getStaff_id(), user);
+			System.out.println("===管理者ログイン成功===");
+			debugWriteUser(user);
 			return "administratorMenu";
 		}else {
 			return "menu";
@@ -142,27 +168,23 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/administratorMenu", method = RequestMethod.GET)
-	public String toAdministratorMenu() {
-		if(true) {//temporary, TODO:admin-login 
-			return "administratorMenu";
-		}else {
-			return "menu";
-		}
+	public String toAdministratorMenu(@ModelAttribute("user") User user) {
+		if(user.isPrivilegeLoginAdmin())return "administratorMenu";
+		else return "redirect:menu";
 	}
 	
 	@RequestMapping(value = "/staffManagement", method = RequestMethod.GET)
-	public String staffManagementPost(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model) {
+	public String staffManagementPost(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model, @ModelAttribute("user") User user) {
 		model.addAttribute(staffSearchForm);
 		ArrayList<StaffSummary> staffSummaries = new ArrayList<StaffSummary>();
 		model.addAttribute("staffSummaries",staffSummaries);
-		return "staffManagement";
+		if(user.isPrivilegeLoginAdmin())return "staffManagement";
+		else return "redirect:menu";
 	}
 	
 	@RequestMapping(value = "/staffManagement", method = RequestMethod.POST)
 	public String staffManagement(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model) {
-		if (result.hasErrors()){
-			return "staffManagement";
-		}
+		if (result.hasErrors()){return "staffManagement";}
 		ArrayList<StaffSummary> staffSummaries = new ArrayList<StaffSummary>();
 		jdbcDriver.getStaffSummaries(staffSearchForm.getStaff_name(), staffSearchForm.getStaff_roll_id(), staffSearchForm.getExperience(), staffSearchForm.getNowPage(),staffSummaries);
 		model.addAttribute("staffSummaries",staffSummaries);
@@ -170,23 +192,26 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/staffEdit", method = RequestMethod.GET)
-	public String staffEdit(@RequestParam String staff_id, Model model) {
+	public String staffEdit(@RequestParam String staff_id, Model model, @ModelAttribute("user") User user) {
 		Staff staff = new Staff();
 		jdbcDriver.getStaff(Integer.parseInt(staff_id), staff);
 		model.addAttribute("staff",staff);
-		return "staffEdit";
+		if(user.isPrivilegeLoginAdmin())return "staffEdit";
+		else return "redirect:menu";
 	}
 	
 	@RequestMapping(value = "/staffEdit", method = RequestMethod.POST)
-	public String staffEditPost(@ModelAttribute Staff staff, Model model) {
+	public String staffEditPost(@Validated @ModelAttribute Staff staff, BindingResult result, Model model) {
+		if(result.hasErrors())return "staffEdit";
 		jdbcDriver.editStaff(staff);
 		jdbcDriver.getStaff(staff.getStaff_id(), staff);
 		model.addAttribute("staff",staff);
 		return "staffEdit";
 	}
 	
-	@RequestMapping(value = "/deleteStaff", method = RequestMethod.GET)
-	public String deleteStaff(@RequestParam String staff_id, Model model) {
+	@RequestMapping(value = "/deleteStaff", method = RequestMethod.POST)
+	public String deleteStaff(@Validated @RequestParam @NotNull @Min(value=0, message="正の整数で指定してください") String staff_id, BindingResult result, Model model) {
+		if(result.hasErrors())return "staffEdit";
 		Staff staff = new Staff();
 		jdbcDriver.getStaff(Integer.parseInt(staff_id), staff);
 		jdbcDriver.deleteStaff(staff);
@@ -195,19 +220,22 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/staffRegistration", method = RequestMethod.GET)
-	public String staffRegistration(Model model) {
+	public String staffRegistration(Model model, @ModelAttribute("user") User user) {
 		Staff staff = new Staff();
 		model.addAttribute("staff",staff);
-		return "staffRegistration";
+		if(user.isPrivilegeLoginAdmin())return "staffRegistration";
+		else return "redirect:menu";
 	}
 	
 	@RequestMapping(value = "/staffRegistration", method = RequestMethod.POST)
-	public String staffRegistrationPost(@ModelAttribute Staff staff, Model model) {
+	public String staffRegistrationPost(@Validated @ModelAttribute Staff staff, BindingResult result, Model model) {
+		if(result.hasErrors())return "staffRegistration";
 		jdbcDriver.registerStaff(staff);
 		model.addAttribute("staff",staff);
 		return "staffRegistration";
 	}
 	
+	//for Regular Expression
 	private boolean isMatch(String textToValidate, String regexToUse){
         Pattern pattern = Pattern.compile(regexToUse);//X{n,m}	X, at least n but not more than m times
 		Matcher matcher = pattern.matcher(textToValidate);
@@ -217,7 +245,7 @@ public class HomeController{
 	
 	//for Session: See @SessionAttributes
 	@ModelAttribute("history")
-	public History putHistoryToSession(History history){
+	public History putHistoryToSession(History history){//初期化どこで行ってる？
         return history;
     }
 	@ModelAttribute("user")
@@ -237,6 +265,15 @@ public class HomeController{
 	@ModelAttribute
 	public StaffSearchForm setupStaffSearchForm() {
 		return new StaffSearchForm();
+	}
+	
+	//for DebugWrite
+	private void debugWriteUser(User user){
+		System.out.println(user.getStaff_id());
+		System.out.println(user.getStaff_name());
+		System.out.println(user.getStaff_roll_id());
+		System.out.println("スタッフログイン権限："+user.isPrivilegeLogin());
+		System.out.println("管理者ログイン権限："+user.isPrivilegeLoginAdmin());
 	}
 }
 /*
@@ -281,4 +318,22 @@ public class HomeController{
  *１．@ModelAttributeでそのクラスにアクセスするためのメソッドを作る（ここまでセッションと同じ）
  *２．サーブレットに相当するメソッドの引数に、@Validated 型 インスタンス, BindingResult resultと仮引数宣言（セッションの３）、このときBindingResultは直後でないといけない
  *３．jspの書き換え
+ *
+ *
+ *
+ *
+ *@ModelAttribute
+	public ArrayList<OrderDetail> putHistoryToSession(History history){
+        return history.orderDetail;
+    }
+    とかにして別で送るか
+    
+    
+ NotEmptyは数値には使えないらしい。
+ https://javaee.github.io/javaee-spec/javadocs/javax/validation/constraints/NotEmpty.html
+ The annotated element must not be null nor empty. Supported types are:
+CharSequence (length of character sequence is evaluated)
+Collection (collection size is evaluated)
+Map (map size is evaluated)
+Array (array length is evaluated)
  */

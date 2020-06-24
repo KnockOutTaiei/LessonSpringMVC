@@ -159,18 +159,18 @@
 									</div>
 									<div>
 										<form:label path="join_date">入社日時</form:label>
-										<form:input path="join_date" type="date"/>
+										<form:input path="join_date" type="date" value="${staff.getJoin_date().substring(0,10)}"/><%//cut it down to "yyyy-MM-dd" %>
 										<form:errors path="join_date" />
 									</div>
 									<div>
 										<form:label path="leave_date">退社日時</form:label>
-										<form:input path="leave_date" type="date"/>
+										<form:input path="leave_date" type="date" value="${staff.getLeave_date().substring(0,10)}"/>
 										<form:errors path="leave_date" />
 									</div>
 									<form:button name="confirm" class="btn btn-primary signup">編集反映</form:button>
 								</form:form>
 								<p>削除はやりなおせません</p>
-								<form action="deleteStaff" method="get"><input type="hidden" value="${staff.getStaff_id()}"><button type="submit">この人の情報を削除</button></form>
+								<form action="deleteStaff" method="post"><input type="hidden" value="${staff.getStaff_id()}"><button type="submit">この人の情報を削除</button></form>
 			  				</div>
 			  			</div>
 	  				</div>

@@ -3,8 +3,8 @@ package rl.knockout.taiei.model;
 import javax.validation.constraints.*;
 
 public class StaffSearchForm{
-	String staff_name;
-	String staff_roll_id;
+	@Size(min=0,max=20) String staff_name;
+	@Size(min=0,max=20) String staff_roll_id;
 	@Min(value = 0, message = "The value must be positive") int experience;
 	@Min(value = 0, message = "The value must be positive") int nowPage;
 	

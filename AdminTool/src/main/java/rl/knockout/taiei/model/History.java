@@ -1,28 +1,31 @@
 package rl.knockout.taiei.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.*;
+import javax.validation.*;
 import javax.validation.constraints.*;
 
 
 //DAO
 public class History{
 	//From/To OrderTbl
-	@Min(value=0,message="The value must be Positve") private String order_id;
-	private String acc_id;
-	private int whole_amount;
-	private int tax;
-	private String order_date;
-	private String limit_date;
-	private String confirm_date;
-	private String order_status;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String order_id;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String acc_id;
+	@NotNull(message="入力してください") private int whole_amount;
+	@NotNull(message="入力してください") private double tax;
+	@NotEmpty(message="入力してください") private String order_date;
+	@NotEmpty(message="入力してください") private String limit_date;
+	@NotEmpty(message="入力してください") private String confirm_date;
+	@NotEmpty(message="入力してください") private String order_status;
 	
 	//From/To OrderDetailTbl
 	//From/To ProductTbl
-	private ArrayList<OrderDetail> orderDetail;{orderDetail = new ArrayList<OrderDetail>();};
+	@Valid private ArrayList<OrderDetail> orderDetail;{orderDetail = new ArrayList<OrderDetail>();};
 	
 	//From/To Account
-	private String login_name;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String login_name;
 	
 	public String getOrder_id() {
 		return order_id;
@@ -42,10 +45,10 @@ public class History{
 	public void setWhole_amount(int whole_amount) {
 		this.whole_amount = whole_amount;
 	}
-	public int getTax() {
+	public double getTax() {
 		return tax;
 	}
-	public void setTax(int tax) {
+	public void setTax(double tax) {
 		this.tax = tax;
 	}
 	public String getOrder_date() {
