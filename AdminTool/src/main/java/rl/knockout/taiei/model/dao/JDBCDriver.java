@@ -102,6 +102,7 @@ public class JDBCDriver extends JDBCBase{
 					user.setStaff_id(resultSet.getInt("staff_id"));
 					user.setStaff_name(resultSet.getString("staff_name"));
 					user.setStaff_roll_id(resultSet.getInt("staff_roll_id"));
+					user.setPrivilegeLogin(true);
 					break;
 				}
 				preparedStatement.close();
@@ -119,7 +120,7 @@ public class JDBCDriver extends JDBCBase{
 	 * @param staff_pw
 	 * @return
 	 */
-	public boolean canLoginAdmin(LoginForm loginForm) {
+	public boolean canLoginAdmin(LoginForm loginForm, User user) {
 		boolean resultFlag = false;
 		if(super.isConnect) {
 			try {
@@ -136,6 +137,7 @@ public class JDBCDriver extends JDBCBase{
 				//digest result
 				while(resultSet.next()) {
 					resultFlag = resultSet.getString("staff_pw").equals(loginForm.getStaff_pw());
+					if(resultFlag)user.setPrivilegeLoginAdmin(true);
 				}
 				preparedStatement.close();
 				return resultFlag;

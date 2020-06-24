@@ -11,21 +11,21 @@ import javax.validation.constraints.*;
 //DAO
 public class History{
 	//From/To OrderTbl
-	private String order_id;
-	private String acc_id;
-	private int whole_amount;
-	private double tax;
-	private String order_date;
-	private String limit_date;
-	private String confirm_date;
-	private String order_status;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String order_id;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String acc_id;
+	@NotNull(message="入力してください") private int whole_amount;
+	@NotNull(message="入力してください") private double tax;
+	@NotEmpty(message="入力してください") private String order_date;
+	@NotEmpty(message="入力してください") private String limit_date;
+	@NotEmpty(message="入力してください") private String confirm_date;
+	@NotEmpty(message="入力してください") private String order_status;
 	
 	//From/To OrderDetailTbl
 	//From/To ProductTbl
 	@Valid private ArrayList<OrderDetail> orderDetail;{orderDetail = new ArrayList<OrderDetail>();};
 	
 	//From/To Account
-	private String login_name;
+	@NotEmpty(message="入力してください") @Size(min=0,max=20) private String login_name;
 	
 	public String getOrder_id() {
 		return order_id;

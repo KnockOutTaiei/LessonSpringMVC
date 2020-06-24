@@ -1,10 +1,12 @@
 package rl.knockout.taiei.model;
 
+import javax.validation.constraints.Min;
+
 public class StaffSummary{
 	String staff_id;
 	String staff_name;
 	String staff_roll_id;
-	int experience;
+	@Min(value = 0, message = "The value must be positive") int experience;
 	
 	public String getStaff_id() {
 		return staff_id;

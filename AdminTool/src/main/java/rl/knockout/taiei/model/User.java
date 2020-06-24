@@ -10,9 +10,11 @@ public class User implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@Id int staff_id;
-	@NotEmpty String staff_name;
-	int staff_roll_id;
+	@Id @NotNull int staff_id;
+	@NotEmpty(message="入力してください") String staff_name;
+	@NotNull  @Min(value = 0, message = "The value must be positive") int staff_roll_id;
+	@NotNull(message="入力してください") boolean privilegeLogin;{privilegeLogin = false;}
+	@NotNull(message="入力してください")boolean privilegeLoginAdmin;{privilegeLoginAdmin = false;}
 	
 	public int getStaff_id() {
 		return staff_id;
@@ -31,5 +33,17 @@ public class User implements Serializable {
 	}
 	public void setStaff_roll_id(int staff_roll_id) {
 		this.staff_roll_id = staff_roll_id;
+	}
+	public boolean isPrivilegeLogin() {
+		return privilegeLogin;
+	}
+	public void setPrivilegeLogin(boolean privilegeLogin) {
+		this.privilegeLogin = privilegeLogin;
+	}
+	public boolean isPrivilegeLoginAdmin() {
+		return privilegeLoginAdmin;
+	}
+	public void setPrivilegeLoginAdmin(boolean privilegeLoginAdmin) {
+		this.privilegeLoginAdmin = privilegeLoginAdmin;
 	}
 }

@@ -6,14 +6,16 @@
  */
 package rl.knockout.taiei.model;
 
+import javax.validation.constraints.*;
+
 public class OrderDetail{
-	private int voucher_id;
-	private int product_id;
-	private int stock;
-	private int amount;
+	@NotNull(message="入力してください") @Min(value = 0, message = "The value must be positive") private int voucher_id;
+	@NotNull(message="入力してください") @Min(value = 0, message = "The value must be positive") private int product_id;
+	@NotNull(message="入力してください") @Min(value = 0, message = "The value must be positive") private int stock;
+	@NotNull(message="入力してください") @Min(value = 0, message = "The value must be positive") private int amount;
 	//below are not included in OrderDetailTbl
-	private String product_name;
-	private int product_price;
+	@NotEmpty(message="入力してください") private String product_name;
+	@NotNull(message="入力してください") @Min(value = 0, message = "The value must be positive") private int product_price;
 	
 	public int getVoucher_id() {
 		return voucher_id;
