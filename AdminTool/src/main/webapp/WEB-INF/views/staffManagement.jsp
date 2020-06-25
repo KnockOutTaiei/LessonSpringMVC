@@ -129,7 +129,7 @@
 			                        </div>
 			                        <div class="form-group">
 			                        	<form:label path="nowPage">ページ目</form:label>
-			                        	<form:input path="nowPage" type="number" class="form-control" placeholder="Enter Page" value="1"/>
+			                        	<form:input path="nowPage" type="number" class="form-control" placeholder="Enter Page" value="${staffSearchForm.getNowPage()}"/>
 			                        	<form:errors path="nowPage" />
 			                        </div>
 			                        <form:button name="confirm" class="btn btn-primary signup">検索</form:button>

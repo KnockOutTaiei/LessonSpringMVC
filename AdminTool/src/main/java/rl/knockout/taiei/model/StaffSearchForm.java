@@ -6,7 +6,7 @@ public class StaffSearchForm{
 	@Size(min=0,max=20) String staff_name;
 	@Size(min=0,max=20) String staff_roll_id;
 	@Min(value = 0, message = "The value must be positive") int experience;
-	@Min(value = 0, message = "The value must be positive") int nowPage;
+	@Min(value = 0, message = "The value must be positive") int nowPage;{nowPage=1;}
 	
 	public String getStaff_name() {
 		return staff_name;

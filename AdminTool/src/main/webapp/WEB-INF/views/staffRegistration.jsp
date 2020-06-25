@@ -114,6 +114,7 @@
 										<form:label path="staff_id">スタッフID</form:label>
 										<form:input path="staff_id" type="text" class="form-control" placeholder="Enter Staff ID" />
 										<form:errors path="staff_id" />
+										<c:out value="${systemMessage}"></c:out>
 									</div>
 									<div class="form-group">
 										<form:label path="staff_name">スタッフ名</form:label>

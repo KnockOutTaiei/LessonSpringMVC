@@ -1,3 +1,6 @@
+//　内部を予想しながら書く、ということに関連しますが、SQL文は大文字小文字まで気にしてます
+//　やっぱりパッと見で「ここは命令で、ここは表の名前なんだな」とかわかるほうが他の人や初学者から見ていいと思うので。
+//　あとそういう内部まで一瞬で見通せるってやっぱり気持ちが良いので…。
 package rl.knockout.taiei.model.dao;
 
 import java.sql.*;
@@ -24,6 +27,13 @@ public class JDBCDriver extends JDBCBase{
 				//precompile
 				String query = "SELECT staff_id,staff_pw FROM StaffTbl WHERE staff_id=?;";
 				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
+				//PreparedStatementは「作られた時点で構文解析を行う」
+				//　構文解析って何かというと、多分「この文のどこが命令で、どこが表名で、どこが列名で、どこが条件で……というのをはっきりさせること」なんじゃないか
+				//　そうすると文構造を変えることでハッキングを達成するSQLインジェクションに対策するためには、構文解析のほうを値の挿入より先に行わなければ意味がない。
+				
+				//　SQLインジェクションは数千万円単位の賠償が判決として出るくらい重大なことなので、適当に流しているなら勉強すべき
+				// https://stackoverflow.com/questions/681583/sql-injection-on-insert がわかりやすい、表まるごと削除とか余裕です
+				// ただしMySQLは;を用いて複数文を一括処理させるのが、仕様上不可能らしく、);を用いた複数文のインジェクションはできないようだ
 
 				//Set
 				preparedStatement.setInt(1, loginForm.getStaff_id());
@@ -167,6 +177,7 @@ public class JDBCDriver extends JDBCBase{
 				String query = "SELECT OrderTbl.order_id,OrderTbl.acc_id,OrderTbl.order_date,OrderTbl.limit_date,OrderTbl.confirm_date,OrderTbl.order_status,Account.login_name FROM OrderTbl INNER JOIN OrderDetailTbl ON OrderTbl.order_id=OrderDetailTbl.order_id INNER JOIN ProductTbl ON OrderDetailTbl.product_id= ProductTbl.product_id INNER JOIN Account ON OrderTbl.acc_id=Account.acc_id";
 				
 				//If Search-condition exists, add "WHERE"
+				//　文構造としては、全て「条件式」にあたるので安全…おそらく。
 				if(isExist(acc_id) || isExist(login_name) || isExist(order_status) || isExist(dateKind)) {
 					query += " WHERE ";
 					////WHERE CONDITION
@@ -200,7 +211,9 @@ public class JDBCDriver extends JDBCBase{
 					}
 				}
 				
+				//　なるべく早く、軽くしたいので、そもそもデータベースからデータを10個しかとってこない
 				query += " LIMIT 10";
+				//OFFSET命令でとってくるデータの場所を変えられる。1個目から10個目ではなく21個目から30個目など
 				query += " OFFSET "+ ((Integer)((page-1)*10)).toString();//0,10,20,...
 
 				query+=";";
@@ -640,10 +653,31 @@ public class JDBCDriver extends JDBCBase{
 	 * @param staff
 	 * @return
 	 */
-	public boolean registerStaff(Staff staff){
+	public boolean registerStaff(Staff staff, SystemMessage systemMessage){
 		if(staff==null) {System.out.println("registarStaff() failed; staff is null");return false;}
 		if(super.isConnect) {
 			try {
+				//precompile
+				String queryOfCheckID = "SELECT COUNT(staff_id) FROM StaffTbl WHERE staff_id=?;";
+				PreparedStatement preparedStatementOfCheckID = super.connection.prepareStatement(queryOfCheckID);
+
+				//Set
+				preparedStatementOfCheckID.setInt(1, staff.getStaff_id());
+				ResultSet resultSet = preparedStatementOfCheckID.executeQuery();
+
+				//digest result
+				while(resultSet.next()) {
+					if(resultSet.getInt(1)>=1) {// If the ID you want to create is already exists
+						//refuse creating
+						System.out.println("refuse creating staff");
+						systemMessage.setErrorMessage("IDが重複しています。別のIDを指定してください。");
+						preparedStatementOfCheckID.close();
+						super.connection.rollback();
+						return false;
+					}
+				}
+				
+				
 				//precompile
 				String query = "INSERT INTO StaffTbl(staff_id,staff_name,staff_pw,staff_roll_id,experience,gender,age,mail,tel_no,join_date,leave_date,del_flg,ins_date,upd_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,FALSE,?,?);";
 				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
@@ -672,7 +706,11 @@ public class JDBCDriver extends JDBCBase{
 
 				//digest result
 				////from LocalDateTime to like"2020/05/11 15:36:45"
-				if(succeededRowNum!=1) {preparedStatement.close();return false;}
+				if(succeededRowNum!=1) {
+					preparedStatement.close();
+					super.connection.rollback();
+					return false;
+				}
 				
 				preparedStatement.close();
 				return true;

@@ -170,7 +170,7 @@
 									<form:button name="confirm" class="btn btn-primary signup">編集反映</form:button>
 								</form:form>
 								<p>削除はやりなおせません</p>
-								<form action="deleteStaff" method="post"><input type="hidden" value="${staff.getStaff_id()}"><button type="submit">この人の情報を削除</button></form>
+								<form action="deleteStaff" method="post"><input type="hidden" name="staff_id" value="${staff.getStaff_id()}"><button type="submit">この人の情報を削除</button></form>
 			  				</div>
 			  			</div>
 	  				</div>
