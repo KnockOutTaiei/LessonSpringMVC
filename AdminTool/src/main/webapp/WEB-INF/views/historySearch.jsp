@@ -145,19 +145,21 @@
 									</div>
 									<div class="form-group">
 										<form:label path="nowPage">ページ数</form:label>
-										<form:select path="nowPage"><%for(int i=1;i<=5;i++){%><form:option value="<%=i%>"><%=i%>ページ目</form:option><%}%></form:select>
+										<form:input path="nowPage" type="number" value="${historySearchForm.getNowPage()}"></form:input>
 										<form:errors path="nowPage" />
 									</div>
+									<!--<form:button path="nowPage" value="${historySearchForm.getNowPage()+1}" name="confirm" class="btn btn-primary signup">次のページへ</form:button>
+									<form:button path="nowPage" value="${historySearchForm.getNowPage()-1}" name="confirm" class="btn btn-primary signup">前のページへ</form:button>-->
 									<form:button name="confirm" class="btn btn-primary signup">検索</form:button>
 								</form:form>
 								<div class="context-box-large">
 					  				<c:forEach var="key" items="${historySummaries}">
 					  					<div>ログインID：<c:out value="${key.getAcc_id()}" /></div>
 					  					<div>ユーザー名：<c:out value="${key.getLogin_name()}" /></div>
-					  					<div>支払い状況<c:out value="${key.getOrder_status()}" /></div>
-					  					<div>注文日時<c:out value="${key.getOrder_date()}" /></div>
-					  					<div>支払い期限<c:out value="${key.getLimit_date()}" /></div>
-					  					<div>支払い日時<c:out value="${key.getConfirm_date()}" /></div>
+					  					<div>支払い状況：<c:out value="${key.getOrder_status()}" /></div>
+					  					<div>注文日時：<c:out value="${key.getOrder_date()}" /></div>
+					  					<div>支払い期限：<c:out value="${key.getLimit_date()}" /></div>
+					  					<div>支払い日時：<c:out value="${key.getConfirm_date()}" /></div>
 					  					<form action="history" method="get"><input type="hidden" name="order_id" value="${key.getOrder_id()}"><button type="submit" class="btn btn-info">履歴詳細へ</button></form>
 		                    		</c:forEach>
 		                    	</div>

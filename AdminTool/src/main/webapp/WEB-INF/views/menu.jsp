@@ -110,11 +110,11 @@
 					            </div>
 					        </div>
 			  				<div class="panel-body">
-			  					
+			  					<label>履歴検索ページへ</label>
 			  					<form action="historySearch" method="get">
-		        					<label>履歴検索ページへ</label>
 		        					<button type="submit" class="btn btn-primary signup">履歴検索ページへ</button>
 			  					</form>
+			  					<label>管理者ログイン</label>
 			  					<form:form modelAttribute="loginForm" action="administratorMenu" method="post">
 									<div class="form-group">
 	        							<form:label path="staff_id" >ログインID</form:label>
