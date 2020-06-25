@@ -248,10 +248,7 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/deleteStaff", method = RequestMethod.POST)
-	public String deleteStaff(@Validated @NotNull @Min(value=0, message="正の整数で指定してください") @RequestParam String staff_id, BindingResult result, Model model) {
-		//for
-		if(result.hasErrors())return "staffEdit";
-		
+	public String deleteStaff(@RequestParam String staff_id, Model model) {
 		Staff staff = new Staff();
 		jdbcDriver.getStaff(Integer.parseInt(staff_id), staff);
 		jdbcDriver.deleteStaff(staff);
