@@ -9,7 +9,7 @@ public class HistorySearchForm{
 	@Size(min=0,max=20)String dateKindString;
 	String beginDate;
 	String endDate;
-	@NotNull @Min(value=0, message="正の整数で指定してください") int nowPage;
+	@NotNull @Min(value=0, message="正の整数で指定してください") int nowPage;{nowPage=1;}
 	
 	public String getAcc_id() {
 		return acc_id;

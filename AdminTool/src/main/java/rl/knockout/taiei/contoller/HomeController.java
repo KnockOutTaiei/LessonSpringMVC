@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import rl.knockout.taiei.ditest.*;
 import rl.knockout.taiei.model.*;
 import rl.knockout.taiei.model.dao.JDBCDriver;
 
@@ -174,16 +173,16 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/staffManagement", method = RequestMethod.GET)
-	public String staffManagementPost(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model, @ModelAttribute("user") User user) {
-		model.addAttribute(staffSearchForm);
-		ArrayList<StaffSummary> staffSummaries = new ArrayList<StaffSummary>();
-		model.addAttribute("staffSummaries",staffSummaries);
+	public String staffManagement(/*@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, */Model model, @ModelAttribute("user") User user) {
+		//model.addAttribute(staffSearchForm);
+		//ArrayList<StaffSummary> staffSummaries = new ArrayList<StaffSummary>();
+		//model.addAttribute("staffSummaries",staffSummaries);
 		if(user.isPrivilegeLoginAdmin())return "staffManagement";
 		else return "redirect:menu";
 	}
 	
 	@RequestMapping(value = "/staffManagement", method = RequestMethod.POST)
-	public String staffManagement(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model) {
+	public String staffManagementPost(@ModelAttribute @Validated StaffSearchForm staffSearchForm, BindingResult result, Model model) {
 		if (result.hasErrors()){return "staffManagement";}
 		ArrayList<StaffSummary> staffSummaries = new ArrayList<StaffSummary>();
 		jdbcDriver.getStaffSummaries(staffSearchForm.getStaff_name(), staffSearchForm.getStaff_roll_id(), staffSearchForm.getExperience(), staffSearchForm.getNowPage(),staffSummaries);
@@ -210,7 +209,7 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = "/deleteStaff", method = RequestMethod.POST)
-	public String deleteStaff(@Validated @RequestParam @NotNull @Min(value=0, message="正の整数で指定してください") String staff_id, BindingResult result, Model model) {
+	public String deleteStaff(@Validated @NotNull @Min(value=0, message="正の整数で指定してください") @RequestParam String staff_id, BindingResult result, Model model) {
 		if(result.hasErrors())return "staffEdit";
 		Staff staff = new Staff();
 		jdbcDriver.getStaff(Integer.parseInt(staff_id), staff);
