@@ -268,8 +268,10 @@ public class HomeController{
 	public String staffRegistrationPost(@Validated @ModelAttribute Staff staff, BindingResult result, Model model) {
 		if(result.hasErrors())return "staffRegistration";
 		
-		jdbcDriver.registerStaff(staff);
+		SystemMessage systemMessage = new SystemMessage();
+		jdbcDriver.registerStaff(staff,systemMessage);
 		model.addAttribute("staff",staff);
+		model.addAttribute("systemMessage",systemMessage);
 		return "staffRegistration";
 	}
 	

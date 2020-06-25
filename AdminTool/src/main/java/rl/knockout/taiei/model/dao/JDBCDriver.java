@@ -653,10 +653,31 @@ public class JDBCDriver extends JDBCBase{
 	 * @param staff
 	 * @return
 	 */
-	public boolean registerStaff(Staff staff){
+	public boolean registerStaff(Staff staff, SystemMessage systemMessage){
 		if(staff==null) {System.out.println("registarStaff() failed; staff is null");return false;}
 		if(super.isConnect) {
 			try {
+				//precompile
+				String queryOfCheckID = "SELECT COUNT(staff_id) FROM StaffTbl WHERE staff_id=?;";
+				PreparedStatement preparedStatementOfCheckID = super.connection.prepareStatement(queryOfCheckID);
+
+				//Set
+				preparedStatementOfCheckID.setInt(1, staff.getStaff_id());
+				ResultSet resultSet = preparedStatementOfCheckID.executeQuery();
+
+				//digest result
+				while(resultSet.next()) {
+					if(resultSet.getInt(1)>=1) {// If the ID you want to create is already exists
+						//refuse creating
+						System.out.println("refuse creating staff");
+						systemMessage.setErrorMessage("IDが重複しています。別のIDを指定してください。");
+						preparedStatementOfCheckID.close();
+						super.connection.rollback();
+						return false;
+					}
+				}
+				
+				
 				//precompile
 				String query = "INSERT INTO StaffTbl(staff_id,staff_name,staff_pw,staff_roll_id,experience,gender,age,mail,tel_no,join_date,leave_date,del_flg,ins_date,upd_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,FALSE,?,?);";
 				PreparedStatement preparedStatement = super.connection.prepareStatement(query);
@@ -685,7 +706,11 @@ public class JDBCDriver extends JDBCBase{
 
 				//digest result
 				////from LocalDateTime to like"2020/05/11 15:36:45"
-				if(succeededRowNum!=1) {preparedStatement.close();return false;}
+				if(succeededRowNum!=1) {
+					preparedStatement.close();
+					super.connection.rollback();
+					return false;
+				}
 				
 				preparedStatement.close();
 				return true;
