@@ -42,6 +42,10 @@ public class JDBCDriver extends JDBCBase{
 				super.connection.commit();
 
 				//digest result
+				//resultSetはおそらくデータ構造が表形式だと思う
+				//resultSet.GetString("colmunName")と列名で引数を指定できる点がこの推測の論拠
+				//　そもそもSQLの結合や副問い合わせは内部で一時的な表を作っていると聞いたことがある、これもそれと同じなんだろう
+				//resultSet.next()で次の行に移れることからも、内部動作としては表をなぞっているのだろう
 				while(resultSet.next()) {
 					resultFlag = resultSet.getString("staff_pw").equals(loginForm.getStaff_pw());
 				}
